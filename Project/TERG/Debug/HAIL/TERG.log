@@ -1,0 +1,8 @@
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(367,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+  Main.cpp
+c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\harvey\documents\hail\includes\glfw\glfw3.h(85): note: see previous definition of 'APIENTRY'
+c:\users\harvey\documents\hail\project\terg\glwindow.h(24): warning C4099: 'Atlas': type name first seen using 'class' now seen using 'struct'
+  c:\users\harvey\documents\hail\project\terg\glwindow.h(24): note: see declaration of 'Atlas'
+  TERG.vcxproj -> C:\Users\Harvey\Documents\HAIL\Project\Debug\HAIL.exe
+  TERG.vcxproj -> C:\Users\Harvey\Documents\HAIL\Project\Debug\HAIL.pdb (Partial PDB)

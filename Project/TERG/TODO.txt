@@ -1,0 +1,11 @@
+TileMap class (For creating tiled scenes and importing tiled artwork)
+Fill Mob Class (Basic vars like pos, vel, size, etc.)
+Fill Player Class 
+Physics class (attached to window, has Sprites / Shapes attached to it)
+Block Class
+
+Collision (part of physics class)
+Terrain Generation (Perlin)
+Machines + Power
+
+Animations?!?

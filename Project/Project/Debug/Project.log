@@ -1,0 +1,12 @@
+﻿  glew.c
+  Utils.cpp
+w:\c++ workspace\project\project\utils.cpp(95): warning C4018: '<': signed/unsigned mismatch
+  texLoader.cpp
+  quaternion.cpp
+  Main.cpp
+c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  w:\c++ workspace\includes\glfw\glfw3.h(85): note: see previous definition of 'APIENTRY'
+w:\c++ workspace\project\project\main.cpp(129): warning C4244: 'argument': conversion from 'time_t' to 'DWORD', possible loss of data
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Project.vcxproj -> W:\C++ Workspace\Project\Debug\Project.exe

@@ -1,0 +1,37 @@
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(367,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+  GLWindow.cpp
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.h(24): warning C4099: 'Atlas': type name first seen using 'class' now seen using 'struct'
+  c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.h(24): note: see declaration of 'Atlas'
+c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\harvey\documents\terg\c++ workspace\includes\glfw\glfw3.h(85): note: see previous definition of 'APIENTRY'
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(44): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(47): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(48): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(64): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(113): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(119): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(190): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(235): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(246): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(187): warning C4101: 'tileSprite': unreferenced local variable
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(185): warning C4101: 'timerEnd': unreferenced local variable
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(387): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(399): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(404): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(739): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(740): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(758): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(759): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(827): warning C4018: '<': signed/unsigned mismatch
+c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(881): warning C4244: 'return': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\harvey\documents\terg\c++ workspace\project\terg\gvector.h(16): warning C4018: '<': signed/unsigned mismatch
+  c:\users\harvey\documents\terg\c++ workspace\project\terg\glwindow.cpp(124): note: see reference to function template instantiation 'bool vectorContains<TileMap*,std::allocator<_Ty>>(const std::vector<_Ty,std::allocator<_Ty>> &,const T &)' being compiled
+          with
+          [
+              _Ty=TileMap *,
+              T=TileMap *
+          ]
+  TERG.vcxproj -> C:\Users\Harvey\Documents\TERG\C++ Workspace\Project\Debug\TERG.exe
+  TERG.vcxproj -> C:\Users\Harvey\Documents\TERG\C++ Workspace\Project\Debug\TERG.pdb (Partial PDB)
