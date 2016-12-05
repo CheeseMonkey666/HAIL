@@ -23,16 +23,16 @@ void glfwError(int error, const char *description) {
 
 //################## Atlas Section ##################
 
-Atlas::Atlas(GLWindow *window, const char* texPath, vector2i tileSize)
-	:width(0), height(0)
+Atlas::Atlas(GLWindow *window, const char* texPath, vector2i tileSize, int border)
+	:width(0), height(0), border(border)
 {
 	texID = window->createTexture(texPath, &width, &height);
 	tileSizeX = tileSize.x;
 	tileSizeY = tileSize.y;
 }
 
-Atlas::Atlas(GLuint texID, vector2i tileSize)
-	:width(0), height(0), texID(texID)
+Atlas::Atlas(GLuint texID, vector2i tileSize, int border)
+	:width(0), height(0), texID(texID), border(border)
 {
 	tileSizeX = tileSize.x;
 	tileSizeY = tileSize.y;
@@ -49,7 +49,9 @@ vector<GLfloat> Atlas::getTexCoords(int tileNum) {
 		while (x >= tilesX)
 			x -= tilesX;
 		x *= tileSizeX;
+		x += border;
 		y *= tileSizeY;
+		y += border;
 		result.push_back((x + delta[i * 2] * tileSizeX) / width);
 		result.push_back((y + delta[i * 2 + 1] * tileSizeY) / height);
 	}
@@ -75,7 +77,7 @@ TileMap::TileMap(Sprite *sprite, int width, int height, int tileSize)
 {
 	tiles = vector<Tile*>(width * height);
 	verts = vector<GLfloat>(width * height * vertFloatsPerTile);
-	indices = vector<GLuint>(width * height * indCountPerTile, -1);
+	indices = vector<GLuint>(width * height * indCountPerTile);
 
 	glBindVertexArray(sprite->VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, sprite->VBO);
@@ -848,7 +850,7 @@ TileMap *GLWindow::addTileMap(int x, int y, int width, int height, int tileSize,
 	glEnableVertexAttribArray(2);
 	glBindVertexArray(0);
 
-	Sprite *sp = new Sprite(x, y, this->width, this->height, this, vao, vbo, atlas->texID, spriteSh, 0, 0, ebo);
+	Sprite *sp = new Sprite(x, y, width * tileSize, height * tileSize, this, vao, vbo, atlas->texID, spriteSh, 0, 0, ebo);
 	TileMap *tm = new TileMap(sp, width, height, tileSize);
 	tileMaps.push_back(tm);
 

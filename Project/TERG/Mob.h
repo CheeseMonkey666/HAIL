@@ -23,5 +23,6 @@ public:
 	
 
 	static Mob *createMob(GLWindow *window, int x, int y, int width, int height, const char *texturePath);
+	static Mob *createMob(GLWindow *window, int x, int y, int width, int height, Atlas *atlas, int tileNum);
 };
 

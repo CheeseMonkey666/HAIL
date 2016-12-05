@@ -22,11 +22,11 @@ class Physics;
 class Tile;
 
 struct Atlas {
-	int width, height, tileSizeX, tileSizeY;
+	int width, height, tileSizeX, tileSizeY, border;
 	GLuint texID;
 
-	Atlas(GLWindow *window, const char *texPath, vector2i tileSize);
-	Atlas(GLuint texID, vector2i tileSize);
+	Atlas(GLWindow *window, const char *texPath, vector2i tileSize, int border = 0);
+	Atlas(GLuint texID, vector2i tileSize, int border = 0);
 	Atlas()
 		:width(0), height(0), tileSizeX(0), tileSizeY(0), texID(0) {}
 

@@ -20,7 +20,7 @@ Mob::~Mob()
 
 Mob *Mob::createMob(GLWindow *window, int x, int y, int width, int height, const char *texturePath) {
 	vector<GLfloat> v = window->getQuadVerts(x, y, width, height, new vector3f(1, 1, 1), true);
-	vector<GLuint> in = {0, 1, 2, 2, 3, 0};
+	vector<GLuint> in = { 0, 1, 2, 2, 3, 0 };
 	Sprite *spr = window->addSprite(x, y, width, height, texturePath);
 	spr->isStatic = false;
 	Mob *m = new Mob(x, y, width, height, spr);
@@ -30,8 +30,20 @@ Mob *Mob::createMob(GLWindow *window, int x, int y, int width, int height, const
 	return m;
 }
 
+Mob *Mob::createMob(GLWindow *window, int x, int y, int width, int height, Atlas *atlas, int tileNum) {
+	vector<GLfloat> v = window->getQuadVerts(x, y, width, height, new vector3f(1, 1, 1), true);
+	vector<GLuint> in = { 0, 1, 2, 2, 3, 0 };
+	Sprite *spr = window->addSprite(x, y, width, height, atlas, tileNum);
+	spr->isStatic = false;
+	Mob *m = new Mob(x, y, width, height, spr);
+	vectorContains(window->objects, static_cast<Object*>(spr));
+	window->objects[vectorContainsIndex] = m;
+	m->spriteIndex = vectorContainsIndex;
+	return m;
+}
+
 void Mob::update() {
-	translate(vector2f(speed.x, speed.y));
+	translate(vector2f(speed.x, -speed.y));
 }
 
 vector2f Mob::getSpeed() {
@@ -57,7 +69,7 @@ void Mob::accelerate(vector2i force, vector2i max) {
 		speed.x = max.x;
 	else
 		speed.x += force.x;
-	if (abs(speed.y + force.y) > abs(max.y) && max.y != 0)
+	if (speed.y + force.y > max.y && max.y != 0)
 		speed.y = max.y;
 	else
 		speed.y += force.y;
