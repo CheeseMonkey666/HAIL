@@ -21,7 +21,7 @@
 
 int width = 1280, height = 720;
 const int tileSize = 64;
-const int playerAcceleration = 40, playerDeceleration = 60, playerMaxRunSpeed = 600, playerJumpSpeed = 50, maxFallSpeed = 400, gravity = 10;
+const int playerAcceleration = 1600, playerDeceleration = 3200, playerMaxRunSpeed = 600, playerJumpSpeed = 800, maxFallSpeed = -1600, gravity = -1000;
 bool leftPressed = false, rightPressed = false, spacePressed = false, grounded = false;
 GLWindow *window;
 Sprite *level;
@@ -67,21 +67,21 @@ void background() {
 }
 
 void update() {
-	player->accelerate(vector2i(0, gravity), vector2i(0, maxFallSpeed));
+	player->accelerate(vector2i(0, gravity), window->frameDelta, vector2i(0, maxFallSpeed));
 	if (leftPressed)
-		player->accelerate(vector2i(-playerAcceleration, 0), vector2i(-playerMaxRunSpeed, 0));
+		player->accelerate(vector2i(-playerAcceleration, 0), window->frameDelta, vector2i(-playerMaxRunSpeed, 0));
 	if (rightPressed)
-		player->accelerate(vector2i(playerAcceleration, 0), vector2i(playerMaxRunSpeed, 0));
-	else if (!leftPressed && abs(player->getSpeed().x) < playerDeceleration)
+		player->accelerate(vector2i(playerAcceleration, 0), window->frameDelta, vector2i(playerMaxRunSpeed, 0));
+	else if (!leftPressed && abs(player->getSpeed().x) < (float)playerDeceleration * window->frameDelta)
 		player->setSpeed(vector2f(0, player->getSpeed().y));
 	else if(!leftPressed && abs(player->getSpeed().x) > 0)
-		player->accelerate(vector2i(playerDeceleration * -(abs(player->getSpeed().x) / player->getSpeed().x), 0), vector2i(0, 0));
+		player->accelerate(vector2i(playerDeceleration * -(abs(player->getSpeed().x) / player->getSpeed().x), 0), window->frameDelta, vector2i(0, 0));
 
 	if (player->simpleCollision(floorTiles) && !grounded)
 		grounded = true;
 
-	if (spacePressed) {
-		player->accelerate(vector2i(0, -playerJumpSpeed), vector2i(0, -500));
+	if (spacePressed && grounded) {
+		player->setSpeed(playerJumpSpeed, Y);
 		grounded = false;
 	}
 }

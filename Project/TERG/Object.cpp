@@ -119,18 +119,14 @@ Object *Object::simpleCollision(vector<Object*> objects) {
 		if (this == objects[j])
 			continue;
 		int xover, yover;
-		//objects[j]->collidable;
 		if (collideWith(this, objects[j], &xover, &yover)) {
-			//printf("Collision detected\n");
 			collided = objects[j];
 			if (abs(xover) > 0 && abs(xover) < abs(yover)) {
-				//this->undoTransform(X);
 				if (m != NULL)
 					m->setSpeed(0, X);
 				this->translateAbs(vector2f(xover, 0));
 			}
 			else if (abs(yover) > 0 && abs(yover) < abs(xover)) {
-				//this->undoTransform(Y);
 				if (m != NULL)
 					m->setSpeed(0, Y);
 				this->translateAbs(vector2f(0, -yover));

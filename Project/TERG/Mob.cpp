@@ -43,7 +43,7 @@ Mob *Mob::createMob(GLWindow *window, int x, int y, int width, int height, Atlas
 }
 
 void Mob::update() {
-	translate(vector2f(speed.x, -speed.y));
+	translate(vector2f(speed.x, speed.y));
 }
 
 vector2f Mob::getSpeed() {
@@ -64,15 +64,29 @@ void Mob::setSpeed(int spd, Axis a) {
 	speed = resolveAxesBlock(speed);
 }
 
-void Mob::accelerate(vector2i force, vector2i max) {
-	if (abs(speed.x + force.x) > abs(max.x) && max.x != 0)
-		speed.x = max.x;
+void Mob::accelerate(vector2i force, double frameDelta, vector2i max) {
+	float sx = speed.x + (float)force.x * frameDelta, sy = speed.y + (float)force.y * frameDelta;
+	if (sx < 0)
+		if (max.x >= 0 || sx >= max.x)
+			speed.x = sx;
+		else
+			speed.x = max.x;
 	else
-		speed.x += force.x;
-	if (speed.y + force.y > max.y && max.y != 0)
-		speed.y = max.y;
+		if (max.x <= 0 || sx <= max.x)
+			speed.x = sx;
+		else
+			speed.x = max.x;
+
+	if (sy < 0)
+		if (max.y >= 0 || sy >= max.y)
+			speed.y = sy;
+		else
+			speed.y = max.y;
 	else
-		speed.y += force.y;
+		if (max.y <= 0 || sy <= max.y)
+			speed.y = sy;
+		else
+			speed.y = max.y;
 
 	speed = resolveAxesBlock(speed);
 }

@@ -18,7 +18,7 @@ public:
 	vector2f getSpeed();
 	void setSpeed(vector2f spd);
 	void setSpeed(int spd, Axis a);
-	void accelerate(vector2i force, vector2i max = vector2i(0, 0));
+	void accelerate(vector2i force, double frameDelta = 1, vector2i max = vector2i(0, 0));
 	vector2f getNextPos();
 	
 
