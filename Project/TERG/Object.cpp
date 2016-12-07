@@ -16,7 +16,7 @@ Object::Object(int x, int y, int width, int height, GLWindow *window, GLuint vao
 
 Sprite::Sprite(int x, int y, int width, int height, GLWindow *window, GLuint vao, GLuint vbo, GLuint tex, const Shader *sh, unsigned int vtxCount, GLfloat depth, GLuint ebo)
 	:Object(x, y, width, height, window, vao, vbo, sh, vtxCount, depth, ebo),
-	texture(tex)
+	texture(tex), animationEnabled(false), flipped(false)
 {
 }
 
@@ -201,6 +201,29 @@ bool Object::collideWith(Object *object, Object* others, int *xoverlap, int *yov
 	if (overlapx && overlapy)
 		return true;
 	return false;
+}
+
+void Sprite::setAnimation(Atlas *spriteSheet, vector<unsigned int> tiles, unsigned int fps) {
+	if (!animationEnabled)
+		return;
+	animationSheet = spriteSheet;
+	animation = tiles;
+	animationFPS = fps;
+	animationFrame = 0;
+	animationDelta = glfwGetTime();
+	window->updateSpriteTexture(this, spriteSheet, tiles[0]);
+}
+
+void Sprite::animate() {
+	if (!animationEnabled)
+		return;
+	if (glfwGetTime() - animationDelta >= (double)1.0f / animationFPS) {
+		animationFrame++;
+		if (animationFrame >= animation.size())
+			animationFrame = 0;
+		window->updateSpriteTexture(this, animationSheet, animation[animationFrame]);
+		animationDelta = glfwGetTime();
+	}
 }
 
 void Sprite::update() {

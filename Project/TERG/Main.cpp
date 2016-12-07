@@ -19,14 +19,18 @@
 #include "Tile.h"
 #include "GLWindow.h"
 
+enum PlayerAnimationState {PLAYER_IDLE, PLAYER_RUN};
+
 int width = 1280, height = 720;
 const int tileSize = 64;
-const int playerAcceleration = 1600, playerDeceleration = 3200, playerMaxRunSpeed = 600, playerJumpSpeed = 800, maxFallSpeed = -1600, gravity = -1000;
-bool leftPressed = false, rightPressed = false, spacePressed = false, grounded = false;
+const int playerAcceleration = 1600, playerDeceleration = 2800, playerMaxRunSpeed = 600, playerJumpSpeed = 800, maxFallSpeed = -1600, gravity = -1000;
+bool leftPressed = false, rightPressed = false, spacePressed = false, grounded = false, playerFacing = true; //playerFacing true = right
 GLWindow *window;
 Sprite *level;
 Mob *player;
+PlayerAnimationState playerState = PLAYER_IDLE;
 vector<Object*> floorTiles(width / tileSize);
+vector<vector<unsigned int>> playerAnimations(2);
 
 GLuint TEX_TITLE;
 Atlas TILES, PLAYER_ANIM;
@@ -76,14 +80,38 @@ void update() {
 		player->setSpeed(vector2f(0, player->getSpeed().y));
 	else if(!leftPressed && abs(player->getSpeed().x) > 0)
 		player->accelerate(vector2i(playerDeceleration * -(abs(player->getSpeed().x) / player->getSpeed().x), 0), window->frameDelta, vector2i(0, 0));
-
 	if (player->simpleCollision(floorTiles) && !grounded)
 		grounded = true;
-
 	if (spacePressed && grounded) {
 		player->setSpeed(playerJumpSpeed, Y);
 		grounded = false;
 	}
+	if (player->x < 0)
+		player->translateAbs(vector2f(-player->x, 0));
+	else if (player->x > width - player->width)
+		player->translateAbs(vector2f(width - player->x - player->width, 0));
+	if (player->y < 0)
+		player->translateAbs(vector2f(0, -player->y));
+
+	if (player->getSpeed().x != 0 && playerState != PLAYER_RUN) {
+		playerState = PLAYER_RUN;
+		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 20);
+	}
+	else if (player->getSpeed().x == 0 && playerState != PLAYER_IDLE) {
+		playerState = PLAYER_IDLE;
+		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 2);
+	}
+
+	if (player->getSpeed().x < 0 && playerFacing) {
+		playerFacing = false;
+		window->flipSpriteTexture(player);
+	}
+	else if (player->getSpeed().x > 0 && !playerFacing) {
+		playerFacing = true;
+		window->flipSpriteTexture(player);
+	}
+
+	player->animate();
 }
 
 int main(void) {
@@ -101,8 +129,14 @@ int main(void) {
 	PLAYER_ANIM = Atlas(window, "assets/player.png", vector2i(32, 32), 1);
 	TEX_TITLE = window->createTexture("assets/Title.png");
 
+	playerAnimations[PLAYER_IDLE] = { 0, 1, 2 };
+	playerAnimations[PLAYER_RUN] = { 8, 9, 10, 11, 12 };
+
 	player = Mob::createMob(window, width / 2, height / 2, 64, 64, &PLAYER_ANIM, 0);
 	window->enableUpdate(player);
+	player->enableAnimation();
+	player->setAnimation(&PLAYER_ANIM, playerAnimations[PLAYER_IDLE], 2);
+	//player->setAnimation(&PLAYER_ANIM, playerAnimations[PLAYER_RUN], 24);
 	for (int i = 0; i < width / tileSize; i++) {
 		floorTiles[i] = window->addSprite(i * tileSize, 600, tileSize, tileSize, &TILES, 0, 0.1f);
 		window->addSprite(i * tileSize, 600 + tileSize, tileSize, tileSize, &TILES, 2, 0.1f);

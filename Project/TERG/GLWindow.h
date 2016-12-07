@@ -89,7 +89,9 @@ public:
 	void setPhysicsEnvironment(Physics *const physics);
 	TileMap *addTileMap(int x, int y, int width, int height, int tileSize, Atlas *atlas);
 	void updateObjectColor(Object *const object, vector3f color);
-	void updateObjectTexture(Object *const object, GLuint texID);
+	void updateSpriteTexture(Sprite *const sprite, GLuint texID);
+	void updateSpriteTexture(Sprite *const sprite, Atlas *atlas, unsigned int tile);
+	void flipSpriteTexture(Sprite *const sprite);
 	void updateObjectTransform(Object *object);
 	void enableUpdate(Object *object, bool enable = true);
 	static void dummyLoopCall();

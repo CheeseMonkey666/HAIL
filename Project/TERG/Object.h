@@ -13,10 +13,12 @@ enum Axis {X, Y, Z, W, POS_X, NEG_X, POS_Y, NEG_Y, POS_Z, NEG_Z, POS_W, NEG_W};
 
 class GLWindow;
 struct QuadTree;
+struct Atlas;
 
 class Object
 {
 	glm::mat4 transform;
+	
 
 public:
 	int x, y;
@@ -58,8 +60,14 @@ public:
 
 class Sprite : public Object
 {
+	unsigned int animationFrame, animationFPS;
+	double animationDelta;
+	vector<unsigned int> animation;
+	Atlas *animationSheet;
+
 public:
 	GLuint texture;
+	bool animationEnabled, flipped;
 
 	Sprite(int x, int y, int width, int height, GLWindow *window, GLuint vao, GLuint vbo, GLuint tex, const Shader *shader, unsigned int vertCount, GLfloat depth = 0, GLuint ebo = 0);
 
@@ -69,6 +77,10 @@ public:
 	{
 
 	};
+
+	void enableAnimation(bool enable = true) { animationEnabled = enable; }
+	void setAnimation(Atlas *spriteSheet, vector<unsigned int> tiles, unsigned int fps);
+	void animate();
 
 	void update();
 };

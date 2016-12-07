@@ -49,9 +49,9 @@ vector<GLfloat> Atlas::getTexCoords(int tileNum) {
 		while (x >= tilesX)
 			x -= tilesX;
 		x *= tileSizeX;
-		x += border;
+		x += border + border * x / tileSizeX;
 		y *= tileSizeY;
-		y += border;
+		y += border + border * y / tileSizeY;
 		result.push_back((x + delta[i * 2] * tileSizeX) / width);
 		result.push_back((y + delta[i * 2 + 1] * tileSizeY) / height);
 	}
@@ -732,6 +732,47 @@ GLuint GLWindow::createTexture(vector<unsigned char> image, int width, int heigh
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return tex;
+}
+
+void GLWindow::updateSpriteTexture(Sprite *const sprite, Atlas *atlas, unsigned int tile) {
+	vector<GLfloat> verts(32), texCoords;
+	glBindBuffer(GL_ARRAY_BUFFER, sprite->VBO);
+	glGetBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), &verts[0]);
+	texCoords = atlas->getTexCoords(tile);
+	if (sprite->flipped) {
+		for (int i = 0; i < 4; i++) {
+			verts[i * 8 + 6] = texCoords[i * 2];
+			verts[i * 8 + 7] = texCoords[i * 2 + 1];
+		}
+		GLfloat buf = verts[6];
+		verts[6] = verts[14];
+		verts[14] = buf;
+		buf = verts[22];
+		verts[22] = verts[30];
+		verts[30] = buf;
+	}
+	else
+		for (int i = 0; i < 4; i++) {
+			verts[i * 8 + 6] = texCoords[i * 2];
+			verts[i * 8 + 7] = texCoords[i * 2 + 1];
+		}
+	glBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), &verts[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void GLWindow::flipSpriteTexture(Sprite *const sprite) {
+	vector<GLfloat> verts(32);
+	glBindBuffer(GL_ARRAY_BUFFER, sprite->VBO);
+	glGetBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), &verts[0]);
+	GLfloat buf = verts[6];
+	verts[6] = verts[14];
+	verts[14] = buf;
+	buf = verts[22];
+	verts[22] = verts[30];
+	verts[30] = buf;
+	glBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), &verts[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	sprite->flipped = !sprite->flipped;
 }
 
 std::vector<GLfloat> GLWindow::getQuadVerts(int x, int y, int quadWidth, int quadHeight, vector3f *color, bool needsTex, GLfloat depth) const {
