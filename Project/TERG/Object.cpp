@@ -133,28 +133,28 @@ Object *Object::simpleCollision(vector<Object*> objects) {
 			}
 		}
 		else if (!this->isStatic && m != NULL) {
-			Object *probe = window->addEmpty(m->x, m->y + 1, m->width, m->height);
+			Object *probe = window->addEmpty(m->x, m->y + 2, m->width, m->height);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(yover) > 0 && abs(yover) < abs(xover)) {
 					this->blockAxis(NEG_Y);
 				}
 			}
 			delete probe;
-			probe = window->addEmpty(m->x + 1, m->y, m->width, m->height);
+			probe = window->addEmpty(m->x + 2, m->y, m->width, m->height);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(xover) > 0 && abs(xover) < abs(yover)) {
 					this->blockAxis(POS_X);
 				}
 			}
 			delete probe;
-			probe = window->addEmpty(m->x - 1, m->y, m->width, m->height);
+			probe = window->addEmpty(m->x - 2, m->y, m->width, m->height);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(xover) > 0 && abs(xover) < abs(yover)) {
 					this->blockAxis(NEG_X);
 				}
 			}
 			delete probe;
-			probe = window->addEmpty(m->x, m->y - 1, m->width, m->height);
+			probe = window->addEmpty(m->x, m->y - 2, m->width, m->height);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(yover) > 0 && abs(yover) < abs(xover)) {
 					this->blockAxis(POS_Y);

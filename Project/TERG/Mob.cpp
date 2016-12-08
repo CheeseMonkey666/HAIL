@@ -92,5 +92,5 @@ void Mob::accelerate(vector2i force, double frameDelta, vector2i max) {
 }
 
 vector2f Mob::getNextPos() {
-	return vector2f(x + speed.x, y - speed.y);
+	return vector2f(x + speed.x, y + speed.y);
 }

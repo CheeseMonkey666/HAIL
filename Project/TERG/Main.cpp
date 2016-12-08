@@ -19,18 +19,18 @@
 #include "Tile.h"
 #include "GLWindow.h"
 
-enum PlayerAnimationState {PLAYER_IDLE, PLAYER_RUN};
+enum PlayerAnimationState {PLAYER_IDLE, PLAYER_RUN, PLAYER_JUMP, PLAYER_FALL};
 
 int width = 1280, height = 720;
-const int tileSize = 64;
-const int playerAcceleration = 1600, playerDeceleration = 2800, playerMaxRunSpeed = 600, playerJumpSpeed = 800, maxFallSpeed = -1600, gravity = -1000;
-bool leftPressed = false, rightPressed = false, spacePressed = false, grounded = false, playerFacing = true; //playerFacing true = right
+const int tileSize = 32;
+const int playerAcceleration = 2000, playerDeceleration = 2800, playerMaxRunSpeed = 600, playerJumpSpeed = 800, maxFallSpeed = -1600, gravity = -1000;
+bool leftPressed = false, rightPressed = false, spacePressed = false, attackPressed = false, grounded = false, playerFacing = true; //playerFacing true = right
 GLWindow *window;
 Sprite *level;
 Mob *player;
 PlayerAnimationState playerState = PLAYER_IDLE;
 vector<Object*> floorTiles(width / tileSize);
-vector<vector<unsigned int>> playerAnimations(2);
+vector<vector<unsigned int>> playerAnimations(4);
 
 GLuint TEX_TITLE;
 Atlas TILES, PLAYER_ANIM;
@@ -71,7 +71,9 @@ void background() {
 }
 
 void update() {
-	player->accelerate(vector2i(0, gravity), window->frameDelta, vector2i(0, maxFallSpeed));
+	player->simpleCollision(floorTiles);
+	if(!vectorContains(player->blockedAxes, NEG_Y))
+		player->accelerate(vector2i(0, gravity), window->frameDelta, vector2i(0, maxFallSpeed));
 	if (leftPressed)
 		player->accelerate(vector2i(-playerAcceleration, 0), window->frameDelta, vector2i(-playerMaxRunSpeed, 0));
 	if (rightPressed)
@@ -80,7 +82,8 @@ void update() {
 		player->setSpeed(vector2f(0, player->getSpeed().y));
 	else if(!leftPressed && abs(player->getSpeed().x) > 0)
 		player->accelerate(vector2i(playerDeceleration * -(abs(player->getSpeed().x) / player->getSpeed().x), 0), window->frameDelta, vector2i(0, 0));
-	if (player->simpleCollision(floorTiles) && !grounded)
+	player->simpleCollision(floorTiles);
+	if (player->y >= 535 && !grounded)
 		grounded = true;
 	if (spacePressed && grounded) {
 		player->setSpeed(playerJumpSpeed, Y);
@@ -93,11 +96,19 @@ void update() {
 	if (player->y < 0)
 		player->translateAbs(vector2f(0, -player->y));
 
-	if (player->getSpeed().x != 0 && playerState != PLAYER_RUN) {
+	if (player->getSpeed().y < 0 && playerState != PLAYER_FALL) {
+		playerState = PLAYER_FALL;
+		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 16);
+	}
+	else if (player->getSpeed().y > 0 && playerState != PLAYER_JUMP) {
+		playerState = PLAYER_JUMP;
+		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 20);
+	}
+	if (player->getSpeed().x != 0 && playerState != PLAYER_RUN && grounded) {
 		playerState = PLAYER_RUN;
 		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 20);
 	}
-	else if (player->getSpeed().x == 0 && playerState != PLAYER_IDLE) {
+	else if (player->getSpeed().x == 0 && playerState != PLAYER_IDLE && grounded) {
 		playerState = PLAYER_IDLE;
 		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 2);
 	}
@@ -131,15 +142,17 @@ int main(void) {
 
 	playerAnimations[PLAYER_IDLE] = { 0, 1, 2 };
 	playerAnimations[PLAYER_RUN] = { 8, 9, 10, 11, 12 };
+	playerAnimations[PLAYER_JUMP] = { 16, 17, 18, 19, 20 };
+	playerAnimations[PLAYER_FALL] = { 3, 4, 5 };
 
 	player = Mob::createMob(window, width / 2, height / 2, 64, 64, &PLAYER_ANIM, 0);
 	window->enableUpdate(player);
 	player->enableAnimation();
 	player->setAnimation(&PLAYER_ANIM, playerAnimations[PLAYER_IDLE], 2);
-	//player->setAnimation(&PLAYER_ANIM, playerAnimations[PLAYER_RUN], 24);
 	for (int i = 0; i < width / tileSize; i++) {
-		floorTiles[i] = window->addSprite(i * tileSize, 600, tileSize, tileSize, &TILES, 0, 0.1f);
-		window->addSprite(i * tileSize, 600 + tileSize, tileSize, tileSize, &TILES, 2, 0.1f);
+		floorTiles[i] = window->addSprite(i * tileSize, height - tileSize * 3, tileSize, tileSize, &TILES, 0, 0.1f);
+		window->addSprite(i * tileSize, height - tileSize * 2, tileSize, tileSize, &TILES, 2, 0.1f);
+		window->addSprite(i * tileSize, height - tileSize, tileSize, tileSize, &TILES, 2, 0.1f);
 	}
 	level = window->addSprite(0, 0, width, height, TEX_TITLE);
 	
