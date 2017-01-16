@@ -12,6 +12,8 @@ Object::Object(int x, int y, int width, int height, GLWindow *window, GLuint vao
 	drawMode(drawMode), depth(depth),
 	collidable(true), isStatic(true), occluded(false)
 {
+	collider[0] = vector2f(0, 0);
+	collider[1] = vector2f(width, height);
 }
 
 Sprite::Sprite(int x, int y, int width, int height, GLWindow *window, GLuint vao, GLuint vbo, GLuint tex, const Shader *sh, unsigned int vtxCount, GLfloat depth, GLuint ebo)
@@ -133,28 +135,28 @@ Object *Object::simpleCollision(vector<Object*> objects) {
 			}
 		}
 		else if (!this->isStatic && m != NULL) {
-			Object *probe = window->addEmpty(m->x, m->y + 2, m->width, m->height);
+			Object *probe = window->addEmpty(m->x + m->collider[0].x, m->y + m->collider[0].y + 2, m->collider[1].x, m->collider[1].y);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(yover) > 0 && abs(yover) < abs(xover)) {
 					this->blockAxis(NEG_Y);
 				}
 			}
 			delete probe;
-			probe = window->addEmpty(m->x + 2, m->y, m->width, m->height);
+			probe = window->addEmpty(m->x + m->collider[0].x + 2, m->y + m->collider[0].y, m->collider[1].x, m->collider[1].y);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(xover) > 0 && abs(xover) < abs(yover)) {
 					this->blockAxis(POS_X);
 				}
 			}
 			delete probe;
-			probe = window->addEmpty(m->x - 2, m->y, m->width, m->height);
+			probe = window->addEmpty(m->x + m->collider[0].x - 2, m->y + m->collider[0].y, m->collider[1].x, m->collider[1].y);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(xover) > 0 && abs(xover) < abs(yover)) {
 					this->blockAxis(NEG_X);
 				}
 			}
 			delete probe;
-			probe = window->addEmpty(m->x, m->y - 2, m->width, m->height);
+			probe = window->addEmpty(m->x + m->collider[0].x, m->y + m->collider[0].y - 2, m->collider[1].x, m->collider[1].y);
 			if (collideWith(probe, objects[j], &xover, &yover)) {
 				if (abs(yover) > 0 && abs(yover) < abs(xover)) {
 					this->blockAxis(POS_Y);
@@ -172,15 +174,15 @@ bool Object::collideWith(Object *object, Object* others, int *xoverlap, int *yov
 	if (!others->collidable && !ignoreCollidable)
 		return false;
 	Object* other = others;
-	bool overlapx = object->x < other->x + other->width && object->x + object->width > other->x;
-	bool overlapy = object->y < other->y + other->height && object->y + object->height > other->y;
+	bool overlapx = object->x + object->collider[0].x < other->x + other->collider[1].x && object->x + object->collider[1].x > other->x + other->collider[0].x;
+	bool overlapy = object->y + object->collider[0].y < other->y + other->collider[1].y && object->y + object->collider[1].y > other->y + other->collider[0].y;
 	if (xoverlap != NULL) {
 		if (overlapx) {
-			if (object->x > other->x) {
-				*xoverlap = other->x + other->width - object->x;
+			if (object->collider[0].x > other->collider[0].x) {
+				*xoverlap = other->x + other->collider[1].x - (object->x + object->collider[0].x);
 			}
 			else {
-				*xoverlap = -(object->x + object->width - other->x);
+				*xoverlap = -(object->x + object->collider[1].x - (other->x + other->collider[0].x));
 			}
 		}
 		else
@@ -188,11 +190,11 @@ bool Object::collideWith(Object *object, Object* others, int *xoverlap, int *yov
 	}
 	if (yoverlap != NULL) {
 		if (overlapy) {
-			if (object->y > other->y) {
-				*yoverlap = other->y + other->height - object->y;
+			if (object->collider[0].y > other->collider[0].y) {
+				*yoverlap = other->y + other->collider[1].y - (object->y + object->collider[0].y);
 			}
 			else {
-				*yoverlap = -(object->y + object->height - other->y);
+				*yoverlap = -(object->y + object->collider[1].y - (other->y + other->collider[0].y));
 			}
 		}
 		else

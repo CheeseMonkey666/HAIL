@@ -245,6 +245,15 @@ void GLWindow::loop(int iterations) {
 			}
 		}
 		mapsToBatch.clear();
+
+		int colliderDebugIndex = 0;
+		if (debugMode) {
+			colliderDebugIndex = objects.size();
+			for (int i = 0; i < colliderDebugIndex - 1; i++) {
+				addObject(objects[i]->x + objects[i]->collider[0].x, objects[i]->y + objects[i]->collider[0].y, objects[i]->collider[1].x, objects[i]->collider[1].y, new vector3f(0, 1, 0), 0, GL_STREAM_DRAW, GL_LINES);
+			}
+		}
+
 		for(int t = 0; t < tileMaps.size(); t++){
 			if(tileMapSpriteObjectIndex < 0)
 				tileMapSpriteObjectIndex = objects.size();
@@ -294,6 +303,21 @@ void GLWindow::loop(int iterations) {
 					glBindTexture(GL_TEXTURE_2D, 0);
 					glDrawElements(GL_LINES, objects[i]->vertCount, GL_UNSIGNED_INT, 0);
 					glDrawElements(GL_POINTS, objects[i]->vertCount, GL_UNSIGNED_INT, 0);
+					glColor3f(0, 1, 0);
+					glBegin(GL_LINES);
+					glVertex2f(objects[i]->x + objects[i]->collider[0].x, objects[i]->y + objects[i]->collider[0].y);
+					glVertex2f(objects[i]->x + objects[i]->collider[1].x, objects[i]->y + objects[i]->collider[0].y);
+
+					glVertex2f(objects[i]->x + objects[i]->collider[1].x, objects[i]->y + objects[i]->collider[0].y);
+					glVertex2f(objects[i]->x + objects[i]->collider[1].x, objects[i]->y + objects[i]->collider[1].y);
+
+					glVertex2f(objects[i]->x + objects[i]->collider[1].x, objects[i]->y + objects[i]->collider[1].y);
+					glVertex2f(objects[i]->x + objects[i]->collider[0].x, objects[i]->y + objects[i]->collider[1].y);
+
+					glVertex2f(objects[i]->x + objects[i]->collider[0].x, objects[i]->y + objects[i]->collider[1].y);
+					glVertex2f(objects[i]->x + objects[i]->collider[0].x, objects[i]->y + objects[i]->collider[0].y);
+					glEnd();
+					glColor3f(1, 1, 1);
 					glBindTexture(GL_TEXTURE_2D, texture);
 				}
 			}
@@ -322,6 +346,12 @@ void GLWindow::loop(int iterations) {
 
 		if(tileMapSpriteObjectIndex >= 0)
 			objects.erase(objects.begin() + tileMapSpriteObjectIndex, objects.end()); //Take tileMapSprite back out
+
+		if (debugMode) {
+			while (colliderDebugIndex < objects.size()) {
+				removeObject(objects[colliderDebugIndex]);
+			}
+		}
 
 		end = glfwGetTime();
 		frameCount++;

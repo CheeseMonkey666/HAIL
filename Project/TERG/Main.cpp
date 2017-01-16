@@ -19,21 +19,21 @@
 #include "Tile.h"
 #include "GLWindow.h"
 
-enum PlayerAnimationState {PLAYER_IDLE, PLAYER_RUN, PLAYER_JUMP, PLAYER_FALL};
+enum PlayerAnimationState {PLAYER_IDLE, PLAYER_RUN, PLAYER_JUMP, PLAYER_FALL, PLAYER_ATTACK};
 
 int width = 1280, height = 720;
 const int tileSize = 32;
-const int playerAcceleration = 2000, playerDeceleration = 2800, playerMaxRunSpeed = 600, playerJumpSpeed = 800, maxFallSpeed = -1600, gravity = -1000;
+const int playerAcceleration = 2000, playerDeceleration = 1600, playerMaxRunSpeed = 600, playerJumpSpeed = 800, maxFallSpeed = -1600, gravity = -1000;
 bool leftPressed = false, rightPressed = false, spacePressed = false, attackPressed = false, grounded = false, playerFacing = true; //playerFacing true = right
 GLWindow *window;
 Sprite *level;
-Mob *player;
+Mob *player, *attackPlayer;
 PlayerAnimationState playerState = PLAYER_IDLE;
 vector<Object*> floorTiles(width / tileSize);
-vector<vector<unsigned int>> playerAnimations(4);
+vector<vector<unsigned int>> playerAnimations(5);
 
 GLuint TEX_TITLE;
-Atlas TILES, PLAYER_ANIM;
+Atlas TILES, PLAYER_ANIM, PLAYER_ATTACK_ANIM;
 
 void keyCallback(GLFWwindow* fwwindow, int key, int scancode, int action, int mode) {
 	if (action == GLFW_PRESS) {
@@ -46,6 +46,9 @@ void keyCallback(GLFWwindow* fwwindow, int key, int scancode, int action, int mo
 			break;
 		case GLFW_KEY_SPACE:
 			spacePressed = true;
+			break;
+		case GLFW_KEY_Z:
+			attackPressed = true;
 			break;
 		case GLFW_KEY_ESCAPE:
 			window->stop();
@@ -61,6 +64,9 @@ void keyCallback(GLFWwindow* fwwindow, int key, int scancode, int action, int mo
 			break;
 		case GLFW_KEY_SPACE:
 			spacePressed = false;
+			break;
+		case GLFW_KEY_Z:
+			attackPressed = false;
 			break;
 		}
 	}
@@ -83,7 +89,7 @@ void update() {
 	else if(!leftPressed && abs(player->getSpeed().x) > 0)
 		player->accelerate(vector2i(playerDeceleration * -(abs(player->getSpeed().x) / player->getSpeed().x), 0), window->frameDelta, vector2i(0, 0));
 	player->simpleCollision(floorTiles);
-	if (player->y >= 535 && !grounded)
+	if (!grounded)
 		grounded = true;
 	if (spacePressed && grounded) {
 		player->setSpeed(playerJumpSpeed, Y);
@@ -135,15 +141,18 @@ int main(void) {
 	window->setKeyCallback(keyCallback);
 	window->setLoopCall(update);
 	window->clearColor = vector3f(0.1f, 0.1f, 0.1f);
+	//window->debugMode = true;
 
 	TILES = Atlas(window, "assets/Tiles.png", vector2i(16, 16));
 	PLAYER_ANIM = Atlas(window, "assets/player.png", vector2i(32, 32), 1);
+	PLAYER_ATTACK_ANIM = Atlas(window, "assets/PlayerAttack.png", vector2i(72, 70), 1);
 	TEX_TITLE = window->createTexture("assets/Title.png");
 
 	playerAnimations[PLAYER_IDLE] = { 0, 1, 2 };
 	playerAnimations[PLAYER_RUN] = { 8, 9, 10, 11, 12 };
 	playerAnimations[PLAYER_JUMP] = { 16, 17, 18, 19, 20 };
 	playerAnimations[PLAYER_FALL] = { 3, 4, 5 };
+	playerAnimations[PLAYER_ATTACK] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 	player = Mob::createMob(window, width / 2, height / 2, 64, 64, &PLAYER_ANIM, 0);
 	window->enableUpdate(player);

@@ -4,12 +4,12 @@ c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(130): warning
   c:\users\harvey\documents\hail\includes\glfw\glfw3.h(85): note: see previous definition of 'APIENTRY'
 c:\users\harvey\documents\hail\project\terg\glwindow.h(24): warning C4099: 'Atlas': type name first seen using 'class' now seen using 'struct'
   c:\users\harvey\documents\hail\project\terg\glwindow.h(24): note: see declaration of 'Atlas'
-c:\users\harvey\documents\hail\project\terg\main.cpp(84): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\harvey\documents\hail\project\terg\main.cpp(93): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\harvey\documents\hail\project\terg\main.cpp(95): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\harvey\documents\hail\project\terg\main.cpp(97): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\harvey\documents\hail\project\terg\main.cpp(90): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\harvey\documents\hail\project\terg\main.cpp(99): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\harvey\documents\hail\project\terg\main.cpp(101): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\harvey\documents\hail\project\terg\main.cpp(103): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 c:\users\harvey\documents\hail\project\terg\gvector.h(16): warning C4018: '<': signed/unsigned mismatch
-  c:\users\harvey\documents\hail\project\terg\main.cpp(75): note: see reference to function template instantiation 'bool vectorContains<Axis,std::allocator<_Ty>>(const std::vector<_Ty,std::allocator<_Ty>> &,const T &)' being compiled
+  c:\users\harvey\documents\hail\project\terg\main.cpp(81): note: see reference to function template instantiation 'bool vectorContains<Axis,std::allocator<_Ty>>(const std::vector<_Ty,std::allocator<_Ty>> &,const T &)' being compiled
           with
           [
               _Ty=Axis,

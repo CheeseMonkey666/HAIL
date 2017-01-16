@@ -35,6 +35,7 @@ public:
 	QuadTree *parentQuad;
 	glm::vec3 lastTransform;
 	vector<Axis> blockedAxes;
+	vector2f collider[2];
 
 	Object(int x, int y, int width, int height, GLWindow *window, GLuint vao, GLuint vbo, const Shader *shader, unsigned int vertCount, GLfloat depth = 0, GLuint ebo = 0, GLenum drawMode = GL_TRIANGLES);
 
