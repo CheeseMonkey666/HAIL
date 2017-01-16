@@ -205,14 +205,16 @@ bool Object::collideWith(Object *object, Object* others, int *xoverlap, int *yov
 	return false;
 }
 
-void Sprite::setAnimation(Atlas *spriteSheet, vector<unsigned int> tiles, unsigned int fps) {
-	if (!animationEnabled)
+void Sprite::setAnimation(Atlas *spriteSheet, vector<unsigned int> tiles, unsigned int fps, unsigned int minLoopCount) {
+	if (!animationEnabled || animationLoopCount < minAnimationLoops)
 		return;
 	animationSheet = spriteSheet;
 	animation = tiles;
 	animationFPS = fps;
 	animationFrame = 0;
 	animationDelta = glfwGetTime();
+	animationLoopCount = 0;
+	minAnimationLoops = minLoopCount;
 	window->updateSpriteTexture(this, spriteSheet, tiles[0]);
 }
 
@@ -221,8 +223,10 @@ void Sprite::animate() {
 		return;
 	if (glfwGetTime() - animationDelta >= (double)1.0f / animationFPS) {
 		animationFrame++;
-		if (animationFrame >= animation.size())
+		if (animationFrame >= animation.size()) {
 			animationFrame = 0;
+			animationLoopCount++;
+		}
 		window->updateSpriteTexture(this, animationSheet, animation[animationFrame]);
 		animationDelta = glfwGetTime();
 	}

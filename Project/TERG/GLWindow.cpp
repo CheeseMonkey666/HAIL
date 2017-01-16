@@ -41,8 +41,8 @@ Atlas::Atlas(GLuint texID, vector2i tileSize, int border)
 vector<GLfloat> Atlas::getTexCoords(int tileNum) {
 	vector<GLfloat> result;
 	vector<GLfloat> delta { 0.001f, 0.001f, 0.999f, 0.001f, 0.999f, 0.999f, 0.001f, 0.999f }; //offset by 0.001f to stop texture bleeding caused by float inaccuracy
-	int tilesX = floor(width / tileSizeX);
-	int tilesY = floor(height / tileSizeY);
+	int tilesX = floor(width / (tileSizeX + border));
+	int tilesY = floor(height / (tileSizeY + border));
 	for (int i = 0; i < 4; i++) {
 		float x = tileNum;
 		float y = floor(tileNum / tilesX);
@@ -221,7 +221,7 @@ void GLWindow::loop(int iterations) {
 		(*loopCall)();
 
 		for (unsigned int i = 0; i < activeObjects.size(); i++) {
-			if (!activeObjects[i]->occluded)
+			//if (!activeObjects[i]->occluded)
 				activeObjects[i]->update();
 		}
 

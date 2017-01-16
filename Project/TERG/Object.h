@@ -61,7 +61,7 @@ public:
 
 class Sprite : public Object
 {
-	unsigned int animationFrame, animationFPS;
+	unsigned int animationFrame, animationFPS, minAnimationLoops;
 	double animationDelta;
 	vector<unsigned int> animation;
 	Atlas *animationSheet;
@@ -69,6 +69,7 @@ class Sprite : public Object
 public:
 	GLuint texture;
 	bool animationEnabled, flipped;
+	unsigned int animationLoopCount;
 
 	Sprite(int x, int y, int width, int height, GLWindow *window, GLuint vao, GLuint vbo, GLuint tex, const Shader *shader, unsigned int vertCount, GLfloat depth = 0, GLuint ebo = 0);
 
@@ -80,7 +81,7 @@ public:
 	};
 
 	void enableAnimation(bool enable = true) { animationEnabled = enable; }
-	void setAnimation(Atlas *spriteSheet, vector<unsigned int> tiles, unsigned int fps);
+	void setAnimation(Atlas *spriteSheet, vector<unsigned int> tiles, unsigned int fps, unsigned int minLoopCount = 0);
 	void animate();
 
 	void update();

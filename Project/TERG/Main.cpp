@@ -77,19 +77,28 @@ void background() {
 }
 
 void update() {
+	if (playerState == PLAYER_ATTACK && !player->occluded) {
+		window->occludeObject(player);
+		window->unOccludeObject(attackPlayer);
+	}
+	else if (playerState != PLAYER_ATTACK && !attackPlayer->occluded) {
+		window->occludeObject(attackPlayer);
+		window->unOccludeObject(player);
+	}
+
 	player->simpleCollision(floorTiles);
-	if(!vectorContains(player->blockedAxes, NEG_Y))
+	if (!vectorContains(player->blockedAxes, NEG_Y)) 
 		player->accelerate(vector2i(0, gravity), window->frameDelta, vector2i(0, maxFallSpeed));
-	if (leftPressed)
+	if (leftPressed && playerState != PLAYER_ATTACK)
 		player->accelerate(vector2i(-playerAcceleration, 0), window->frameDelta, vector2i(-playerMaxRunSpeed, 0));
-	if (rightPressed)
+	if (rightPressed && playerState != PLAYER_ATTACK)
 		player->accelerate(vector2i(playerAcceleration, 0), window->frameDelta, vector2i(playerMaxRunSpeed, 0));
-	else if (!leftPressed && abs(player->getSpeed().x) < (float)playerDeceleration * window->frameDelta)
+	else if ((!leftPressed || playerState == PLAYER_ATTACK) && abs(player->getSpeed().x) < (float)playerDeceleration * window->frameDelta)
 		player->setSpeed(vector2f(0, player->getSpeed().y));
-	else if(!leftPressed && abs(player->getSpeed().x) > 0)
+	else if((!leftPressed || playerState == PLAYER_ATTACK) && abs(player->getSpeed().x) > 0)
 		player->accelerate(vector2i(playerDeceleration * -(abs(player->getSpeed().x) / player->getSpeed().x), 0), window->frameDelta, vector2i(0, 0));
 	player->simpleCollision(floorTiles);
-	if (!grounded)
+	if (!grounded && player->y >= 555)
 		grounded = true;
 	if (spacePressed && grounded) {
 		player->setSpeed(playerJumpSpeed, Y);
@@ -102,33 +111,45 @@ void update() {
 	if (player->y < 0)
 		player->translateAbs(vector2f(0, -player->y));
 
-	if (player->getSpeed().y < 0 && playerState != PLAYER_FALL) {
-		playerState = PLAYER_FALL;
-		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 16);
-	}
-	else if (player->getSpeed().y > 0 && playerState != PLAYER_JUMP) {
-		playerState = PLAYER_JUMP;
-		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 20);
-	}
-	if (player->getSpeed().x != 0 && playerState != PLAYER_RUN && grounded) {
-		playerState = PLAYER_RUN;
-		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 20);
-	}
-	else if (player->getSpeed().x == 0 && playerState != PLAYER_IDLE && grounded) {
-		playerState = PLAYER_IDLE;
-		player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 2);
+	if (playerState != PLAYER_ATTACK || (playerState == PLAYER_ATTACK && attackPlayer->animationLoopCount > 0)) {
+		if (player->getSpeed().y < 0 && playerState != PLAYER_FALL) {
+			playerState = PLAYER_FALL;
+			player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 16);
+		}
+		else if (player->getSpeed().y > 0 && playerState != PLAYER_JUMP) {
+			playerState = PLAYER_JUMP;
+			player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 20);
+		}
+		if (player->getSpeed().x != 0 && playerState != PLAYER_RUN && grounded) {
+			playerState = PLAYER_RUN;
+			player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 20);
+		}
+		else if (player->getSpeed().x == 0 && playerState != PLAYER_IDLE && grounded) {
+			playerState = PLAYER_IDLE;
+			player->setAnimation(&PLAYER_ANIM, playerAnimations[playerState], 2);
+		}
+		if (attackPressed && playerState != PLAYER_ATTACK) {
+			playerState = PLAYER_ATTACK;
+			window->occludeObject(player);
+			window->unOccludeObject(attackPlayer);
+			attackPlayer->setAnimation(&PLAYER_ATTACK_ANIM, playerAnimations[playerState], 30, 1);
+		}
 	}
 
 	if (player->getSpeed().x < 0 && playerFacing) {
 		playerFacing = false;
 		window->flipSpriteTexture(player);
+		window->flipSpriteTexture(attackPlayer);
 	}
 	else if (player->getSpeed().x > 0 && !playerFacing) {
 		playerFacing = true;
 		window->flipSpriteTexture(player);
+		window->flipSpriteTexture(attackPlayer);
 	}
 
+	attackPlayer->translateAbs(vector2f((player->x - attackPlayer->x) + (player->width - attackPlayer->width) / 2, attackPlayer->y - player->y - (player->height - attackPlayer->height)));
 	player->animate();
+	attackPlayer->animate();
 }
 
 int main(void) {
@@ -158,6 +179,8 @@ int main(void) {
 	window->enableUpdate(player);
 	player->enableAnimation();
 	player->setAnimation(&PLAYER_ANIM, playerAnimations[PLAYER_IDLE], 2);
+	attackPlayer = Mob::createMob(window, width / 2, height / 2, 72 * 2, 70 * 2, &PLAYER_ATTACK_ANIM, 0);
+	attackPlayer->enableAnimation();
 	for (int i = 0; i < width / tileSize; i++) {
 		floorTiles[i] = window->addSprite(i * tileSize, height - tileSize * 3, tileSize, tileSize, &TILES, 0, 0.1f);
 		window->addSprite(i * tileSize, height - tileSize * 2, tileSize, tileSize, &TILES, 2, 0.1f);
